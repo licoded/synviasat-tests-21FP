@@ -17,8 +17,10 @@ BDD_LIB			=	deps/CUDD-install/lib/libcudd.a
 ALLFILES		=	main.cpp $(CHECKING) $(SOLVER) $(FORMULAFILES) $(PARSERFILES) $(UTILFILES) $(SYNTHESIS) $(BDD_LIB) 
 
 
-CC	    =   g++
-FLAG    = -I./  -I./minisat/  -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -fpermissive #-fsanitize=address -fno-omit-frame-pointer
+CC	    =   clang++ -std=c++11
+CLANG_PLUS_PLUS_FLAG	=	-Wno-error=reserved-user-defined-literal
+G_PLUS_PLUS_FLAG		=	-Wno-literal-suffix
+FLAG    = $(CLANG_PLUS_PLUS_FLAG) -I./  -I./minisat/  -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -fpermissive #-fsanitize=address -fno-omit-frame-pointer
 DEBUGFLAG   =	-D DEBUG -g -pg
 RELEASEFLAG = -O3
 
