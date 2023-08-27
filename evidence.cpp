@@ -86,12 +86,6 @@ namespace aalta
 		sat_trace_->push_back(make_pair(fill_in_Y(Y_af), X_af));
 	}
 
-	void Evidence::pop_back()
-	{
-		traces_.pop_back();
-		sat_trace_->pop_back();
-	}
-
 	void Evidence::print()
 	{
 		// cout << "Find satisfying model: \n";

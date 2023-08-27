@@ -55,6 +55,7 @@ namespace aalta
 		}
 		
 		bool check ();
+		bool check_by_assump (aalta_formula *assump, int begin_frame_level);
 
 		inline void add_constraint (aalta_formula* c, bool ltlf = true, bool verbose = false) 
 		{
@@ -78,6 +79,7 @@ namespace aalta
 		//functions
 		//main checking function
 		bool car_check (aalta_formula *f);
+		bool car_check_from (aalta_formula *f, int begin_frame_level);
 		//try to find a model with the length of \@frame_level
 		bool try_satisfy (aalta_formula *f, int frame_level);
 		//add \@uc to frame \@frame_level

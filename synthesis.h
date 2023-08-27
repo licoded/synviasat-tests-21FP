@@ -73,7 +73,12 @@ public:
     static long double average_sat_time;
 
     Syn_Frame(aalta_formula *);
-    ~Syn_Frame() { delete state_in_bdd_; }
+    ~Syn_Frame()
+    {
+        delete state_in_bdd_;
+        if (car_checker_ != NULL)
+            delete car_checker_;
+    }
     Status CheckRealizability(bool verbose = false);
     inline DdNode *GetBddPointer()
     {
@@ -124,6 +129,16 @@ public:
     static void setTimeLimit(int time_limit) { TIME_LIMIT_ = time_limit; }
     static int getTimeLimit() { return TIME_LIMIT_; }
 
+    CARChecker *InitCARChecker(aalta_formula *f)
+    {
+        car_checker_=new CARChecker(f, false, true);
+        return car_checker_;
+    }
+    CARChecker *GetChecker(){return car_checker_;}
+
+    int GetBaseLevel(){return base_level_;}
+    void SetBaseLevel(int l){base_level_=l;}
+
 private:
     FormulaInBdd *state_in_bdd_;
 
@@ -143,9 +158,13 @@ private:
     int winning_checked_idx_;
     int failure_checked_idx_;
 
+    int base_level_;
+
     // whther the current frame is
     // the beginning of a sat trace
     bool is_trace_beginning_;
+
+    CARChecker *car_checker_;
 
     static int TIME_LIMIT_;
 };

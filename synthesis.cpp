@@ -201,6 +201,8 @@ Syn_Frame::Syn_Frame(aalta_formula *af)
     winning_checked_idx_ = 0;
     failure_checked_idx_ = 0;
     is_trace_beginning_ = false;
+    car_checker_ = NULL;
+    base_level_ = 0;
 }
 
 bool Syn_Frame::KnownWinning(bool verbose)
@@ -217,6 +219,7 @@ bool Syn_Frame::KnownWinning(bool verbose)
         }
         return true;
     }
+    return false;
 
     // traverse winning_state_vec to check if imply dfa_state
     for (; winning_checked_idx_ < winning_state_vec.size(); winning_checked_idx_++)
@@ -253,6 +256,7 @@ bool Syn_Frame::KnownFailure(bool verbose)
         }
         return true;
     }
+    return false;
 
     // traverse failure_state_vec to check if imply dfa_state
     for (; failure_checked_idx_ < failure_state_vec.size(); failure_checked_idx_++)
@@ -451,25 +455,29 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
              << "constraint of edge: " << edge_constraint->to_string() << endl;
     }
     // aalta_formula *block_formula = ConstructBlockFormula(searcher, edge_constraint);
-    aalta_formula *f;
-    if (edge_constraint->oper() != aalta_formula::True)
-        f = aalta_formula(aalta_formula::And, tp_frame->GetFormulaPointer(), edge_constraint).unique();
-    else
-        f = tp_frame->GetFormulaPointer();
+    aalta_formula *f = tp_frame->GetFormulaPointer();
+    // if (edge_constraint->oper() != aalta_formula::True)
+    //     f = aalta_formula(aalta_formula::And, tp_frame->GetFormulaPointer(), edge_constraint).unique();
+    // else
+    //     f = tp_frame->GetFormulaPointer();
     // cout << f->to_string() << endl;
     f = f->add_tail();
     f = f->remove_wnext();
     f = f->simplify();
     f = f->split_next();
-    if (verbose)
-        cout << "Construct Checker: " << f->to_string() << endl;
+    // if (verbose)
+    //     cout << "Construct Checker: " << f->to_string() << endl;
     Syn_Frame::sat_call_cnt += 1;
     struct timeval t1, t2;
     long double timeuse;
     // cout << "begin sat solving" << endl;
     gettimeofday(&t1, NULL);
-    CARChecker checker(f, false, true);
-    bool check_res = checker.check();
+    // CARChecker checker(f, false, true);
+    bool new_checker=((tp_frame->GetChecker())==NULL);
+    CARChecker* checker=(new_checker)?(tp_frame->InitCARChecker(f)):(tp_frame->GetChecker());
+
+    bool check_res = checker->check_by_assump(edge_constraint->simplify(),tp_frame->GetBaseLevel());
+
     gettimeofday(&t2, NULL);
     timeuse = (t2.tv_sec - t1.tv_sec) * 1000.0 + (t2.tv_usec - t1.tv_usec) / 1000.0;
     Syn_Frame::average_sat_time = Syn_Frame::average_sat_time + (timeuse - Syn_Frame::average_sat_time) / Syn_Frame::sat_call_cnt;
@@ -487,16 +495,15 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
         if (verbose)
         {
             cout << "SAT checking result: sat" << endl;
-            checker.print_evidence();
+            checker->print_evidence();
             cout << "push items to stack:" << endl;
         }
-        vector<pair<aalta_formula *, aalta_formula *>> *tr = checker.get_model_for_synthesis();
+        vector<pair<aalta_formula *, aalta_formula *>> *tr = checker->get_model_for_synthesis();
         tp_frame->SetTraceBeginning();
         for (int i = 0; i < ((tr->size()) - 1); ++i)
         {
             aalta_formula *Y_edge = ((*tr)[i]).first;
             aalta_formula *X_edge = ((*tr)[i]).second;
-            (searcher.back())->SetTravelDirection(Y_edge, X_edge);
             aalta_formula *predecessor = (searcher.back())->GetFormulaPointer();
             { // check whether accepting in advance
                 unordered_set<int> tmp_edge;
@@ -505,8 +512,12 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
                 if (IsAcc(predecessor, tmp_edge))
                 {
                     cout << "accepting in advance, total is " << (tr->size()) << ", acc at " << i + 1 << endl;
+                    while(i<(tr->size()-1))
+                        tr->pop_back();
+                    break;
                 }
             }
+            (searcher.back())->SetTravelDirection(Y_edge, X_edge);
             unordered_set<int> edge;
             Y_edge->to_set(edge);
             // if (CheckCompleteY(predecessor, edge) != Tt)
@@ -546,6 +557,8 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
                      << "\t\tto state id: " << Syn_Frame::get_print_id(successor->id()) << endl;
             searcher.push_back(frame);
         }
+        if(new_checker)
+            tp_frame->SetBaseLevel(tr->size()-1);
         // the last position is the accepting edge
         if (verbose)
             cout << "last position of sat trace is accepting edge (we will then check if BaseWinningAtY)" << endl;

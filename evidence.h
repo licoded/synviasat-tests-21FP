@@ -25,7 +25,18 @@ namespace aalta
 		void push(bool);
 		void push(olg_formula &);
 		void push(aalta_formula *);
-		void pop_back();
+		void pop_back()
+		{
+			traces_.pop_back();
+			sat_trace_->pop_back();
+		}
+
+		void clear()
+		{
+			// assert(traces_.size() >= sat_trace_->size());
+			traces_.clear();
+			sat_trace_->clear();
+		}
 
 		inline std::vector<std::pair<aalta_formula *, aalta_formula *>> *get_model_for_synthesis()
 		{

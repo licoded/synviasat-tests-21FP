@@ -65,6 +65,9 @@ public:
 
 	void add_constraint (aalta_formula* c, bool ltlf = true, bool verbose = false);
 	
+	void generate_clauses (aalta_formula*); //generate claueses for SAT solver
+	void coi_set_up (aalta_formula *);
+
 protected:
 	////////////members
 	int tail_;   //the integer used to represent Tail. It is fixed to be f->id ()+1
@@ -114,7 +117,6 @@ protected:
  	std::vector<int> coi_of_assumption ();  //get COI for assumptions
  	void coi_of (int id, std::vector<int>& res);  //get COI for the given \@id, results are stored in \@ res
  	void coi_merge (std::vector<int>& to, std::vector<int>& from); //merge the coi information from \@ from to \@ to
- 	void generate_clauses (aalta_formula*); //generate claueses for SAT solver
 	void add_clauses_for (aalta_formula*); //add clauses for the formula f into SAT solver
   	//for each pair (Xa, X!a), (XXa, XX!a).., generate equivalence Xa<-> !X!a, XXa <-> !XX!a
   	void add_X_conflicts ();
@@ -125,7 +127,6 @@ protected:
  	
  	
  	void shrink_to_coi (std::vector<int>&);  //shrink the assignment to COI, i.e. relevant variables only
- 	void coi_set_up (aalta_formula *);
  	void compute_full_coi (aalta_formula *f, std::vector<int>& ids);
  	void shrink_coi (std::vector<int>& ids);
  	void shrink_to_partial (std::vector<int>&);   //shrink the assignment to paritial one

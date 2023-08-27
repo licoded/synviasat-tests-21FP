@@ -154,6 +154,23 @@
 		 return car_check (to_check_);
  	 }
  	
+	bool CARChecker::check_by_assump (aalta_formula *assump, int begin_frame_level)
+	{
+		if(evidence_ != NULL)
+			evidence_->clear();
+		if (assump->oper () == aalta_formula::True)
+			return check ();
+		else if (assump->oper () == aalta_formula::False)
+			return false;
+
+		if (to_check_->oper () == aalta_formula::False)
+			return false;
+
+		solver_->generate_clauses(assump);
+		solver_->coi_set_up(assump);
+		return car_check_from (aalta_formula(aalta_formula::And,to_check_,assump).unique(), begin_frame_level);
+	}
+
  	bool CARChecker::car_check (aalta_formula* f)
  	{
  		if (sat_once (f))
@@ -186,6 +203,26 @@
  		}
  		return false;	
  	}
+
+	bool CARChecker::car_check_from(aalta_formula *f, int begin_frame_level)
+	{
+		if (begin_frame_level == 0)
+			return car_check(f);
+
+		int frame_level = begin_frame_level - 1;
+		while (true)
+		{
+			tmp_frame_.clear();
+			if (try_satisfy(f, frame_level))
+				return true;
+			if (inv_found(frame_level))
+				return false;
+			add_new_frame();
+			frame_level++;
+			assert(frame_level < solver_->get_frame_flags_size());
+		}
+		return false;
+	}
  	
  	void CARChecker::add_new_frame ()
  	{
