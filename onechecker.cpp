@@ -38,6 +38,22 @@ namespace aalta
         return false;
     }
 
+    bool OneChecker::sat_once (aalta_formula *f)
+	{
+		if (solver_->check_tail (f))
+		{
+			if (evidence_ != NULL)
+			{
+				Transition *t = solver_->get_transition ();
+				assert (t != NULL);
+				evidence_->push (t->label ());
+				delete t;
+			}
+			return true;
+		}
+		return false;
+	}
+
 	Transition* OneChecker::get_one_transition_from (aalta_formula* f)
 	{
 		bool ret = solver_->solve_by_assumption (f);

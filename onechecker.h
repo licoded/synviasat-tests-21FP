@@ -31,12 +31,17 @@ namespace aalta
         }
 
         bool check (aalta_formula* f);
+
+        // for ltlf synthesis
+        // trace <Y,X>*
+        inline std::pair<aalta_formula *, aalta_formula *> get_model_for_synthesis()
+        {
+            return evidence_->get_model_for_synthesis()->at(0);
+        }
+
+    private:
         bool sat_once (aalta_formula* f);   //check whether the formula can be satisfied in one step (the terminating condition of checking)
         Transition* get_one_transition_from (aalta_formula* f);
-        void push_formula_to_explored (aalta_formula* f)
-        {
-            solver_->block_formula (f);
-        }
 
     protected:
         // flags
