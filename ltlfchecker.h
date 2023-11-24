@@ -40,7 +40,7 @@ public:
 	
 	// for ltlf synthesis
 	// trace <Y,X>*
-	inline std::vector<std::pair<aalta_formula *, aalta_formula *>> *get_model_for_synthesis()
+	inline std::vector<std::pair<aalta_formula *, aalta_formula *> > *get_model_for_synthesis()
 	{
 		return evidence_->get_model_for_synthesis();
 	}

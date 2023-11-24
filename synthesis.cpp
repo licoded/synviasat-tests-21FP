@@ -490,7 +490,7 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
             checker.print_evidence();
             cout << "push items to stack:" << endl;
         }
-        vector<pair<aalta_formula *, aalta_formula *>> *tr = checker.get_model_for_synthesis();
+        vector<pair<aalta_formula *, aalta_formula *> > *tr = checker.get_model_for_synthesis();
         tp_frame->SetTraceBeginning();
         for (int i = 0; i < ((tr->size()) - 1); ++i)
         {

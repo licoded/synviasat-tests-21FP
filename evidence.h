@@ -19,7 +19,7 @@ namespace aalta
 	{
 	public:
 		// functions
-		Evidence() { sat_trace_ = new std::vector<std::pair<aalta_formula *, aalta_formula *>>; };
+		Evidence() { sat_trace_ = new std::vector<std::pair<aalta_formula *, aalta_formula *> >; };
 		~Evidence() { delete sat_trace_; }
 		void print();
 		void push(bool);
@@ -27,7 +27,7 @@ namespace aalta
 		void push(aalta_formula *);
 		void pop_back();
 
-		inline std::vector<std::pair<aalta_formula *, aalta_formula *>> *get_model_for_synthesis()
+		inline std::vector<std::pair<aalta_formula *, aalta_formula *> > *get_model_for_synthesis()
 		{
 			return sat_trace_;
 		}
@@ -38,7 +38,7 @@ namespace aalta
 
 		// for ltlf synthesis
 		// tr \in (<Y,X>)*
-		std::vector<std::pair<aalta_formula *, aalta_formula *>> *sat_trace_;
+		std::vector<std::pair<aalta_formula *, aalta_formula *> > *sat_trace_;
 	};
 
 	// for synthesis
