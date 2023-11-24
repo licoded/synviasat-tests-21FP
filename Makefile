@@ -9,12 +9,15 @@ SOLVER			=	minisat/core/Solver.cc aaltasolver.cpp solver.cpp carsolver.cpp
 
 CHECKING		=	ltlfchecker.cpp carchecker.cpp evidence.cpp
 
+NEW_CHECKING	=	onechecker.cpp ltlfchecker.cpp carchecker.cpp evidence.cpp
+
 SYNTHESIS		=	synthesis.cpp formula_in_bdd.cpp generalizer.cpp
 
 BDD_LIB			=	deps/CUDD-install/lib/libcudd.a
 
 
 ALLFILES		=	main.cpp $(CHECKING) $(SOLVER) $(FORMULAFILES) $(PARSERFILES) $(UTILFILES) $(SYNTHESIS) $(BDD_LIB) 
+ALL_TEST_DEPS	=	$(FORMULAFILES) $(NEW_CHECKING) $(SOLVER) $(UTILFILES) $(PARSERFILES) $(SYNTHESIS) $(BDD_LIB)
 
 
 CC	    =   g++
@@ -41,6 +44,9 @@ release :   $(ALLFILES)
 
 debug :	$(ALLFILES)
 	$(CC) $(FLAG) $(DEBUGFLAG) $(ALLFILES) -lm -lz -o ltlfsyn
+
+onechecker-basic : tests/onechecker/01.basic.cpp $(ALL_TEST_DEPS)
+	$(CC) $(FLAG) $(DEBUGFLAG) $^ -lm -lz -o $@
 
 clean :
 	rm -f *.o *~ ltlfsyn

@@ -16,7 +16,8 @@ int Syn_Frame::TIME_LIMIT_ = 5;
 unordered_map<int, string> Syn_Frame::print_states;
 string Syn_Frame::get_print_id(int state_id)
 {
-    print_states.insert({state_id, "state"+to_string(print_states.size()+1)});
+    // print_states.insert({state_id, "state"+to_string(print_states.size()+1)});
+    print_states[state_id] = "state"+to_string(print_states.size()+1);
     return print_states.at(state_id);
 }
 // static public variable of Syn_Frame
@@ -305,7 +306,7 @@ Status Syn_Frame::CheckRealizability(bool verbose)
     return Unknown;
 }
 
-const vector<string> signal2str = {
+const string signal2str[] = {
     "To_winning_state",
     "To_failure_state",
     "Accepting_edge",
