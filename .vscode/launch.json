@@ -22,6 +22,26 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "mac-onechecker",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceRoot}/onechecker-basic",
+            // "program": "/Users/lic/dev/ecnu_23/jianwen_labs/synviasat-tests-21FP/onechecker-basic",
+            "args": ["a U b"],
+            "cwd": "${workspaceRoot}",
+            // "stopAtEntry": true,
+            // "environment": [],
+            // "externalConsole": false,
+            // "MIMode": "lldb",
+            // "setupCommands": [
+            //     {
+            //         "description": "为 gdb 启用整齐打印",
+            //         "text": "-enable-pretty-printing",
+            //         "ignoreFailures": true
+            //     }
+            // ]
         }
     ]
 }
