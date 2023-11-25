@@ -8,7 +8,7 @@ using namespace aalta;
 int main()
 {
     string input_f; // = "a U b";
-	cin >> input_f;
+	getline(cin, input_f);
 
 	// rewrite formula
 	aalta_formula *af;
