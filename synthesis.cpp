@@ -492,69 +492,18 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
             cout << "push items to stack:" << endl;
         }
 
-        pair<aalta_formula *, aalta_formula *> tr_0 = checker.get_model_for_synthesis();
-        vector<pair<aalta_formula *, aalta_formula *> > *tr = new vector<pair<aalta_formula *, aalta_formula *> >;
-        tr->push_back(tr_0);
+        pair<aalta_formula *, aalta_formula *> search_edge = checker.get_model_for_synthesis();
 
         tp_frame->SetTraceBeginning();
-        for (int i = 0; i < ((tr->size()) - 1); ++i)
-        {
-            aalta_formula *Y_edge = ((*tr)[i]).first;
-            aalta_formula *X_edge = ((*tr)[i]).second;
-            (searcher.back())->SetTravelDirection(Y_edge, X_edge);
-            aalta_formula *predecessor = (searcher.back())->GetFormulaPointer();
-            { // check whether accepting in advance
-                unordered_set<int> tmp_edge;
-                X_edge->to_set(tmp_edge);
-                Y_edge->to_set(tmp_edge);
-                if (IsAcc(predecessor, tmp_edge))
-                {
-                    cout << "accepting in advance, total is " << (tr->size()) << ", acc at " << i + 1 << endl;
-                }
-            }
-            unordered_set<int> edge;
-            Y_edge->to_set(edge);
-            // if (CheckCompleteY(predecessor, edge) != Tt)
-            // {
-            //     if (verbose)
-            //         cout << "Incomplete Y" << endl;
-            //     (searcher.back())->process_signal(Incomplete_Y, verbose);
-            //     return Unknown;
-            // }
-            X_edge->to_set(edge);
-            aalta_formula *successor = FormulaProgression(predecessor, edge);
-            // successor = xnf(successor);
-            Syn_Frame *frame = new Syn_Frame(successor);
-            if (repeat_with_prefix(searcher, successor, verbose) || frame->KnownFailure(verbose))
-            {
-                delete frame;
-                (searcher.back())->process_signal(To_failure_state, verbose);
-                return Unknown;
-            }
-            if (frame->KnownWinning(verbose))
-            {
-                delete frame;
-                (searcher.back())->process_signal(To_winning_state, verbose);
-                return Unknown;
-            }
-            // { // check same state
-            //     if (RepeatState(searcher, frame->GetBddPointer()))
-            //     {
-            //         cout << "State that repeats" << endl;
-            //     }
-            // }
-            if (verbose)
-                cout << "\t\tby edge: " << endl
-                     << "\t\t\tY = " << Y_edge->to_literal_set_string() << endl
-                     << "\t\t\tX = " << X_edge->to_literal_set_string() << endl
-                     << "\t\tto state: " << successor->to_string() << endl
-                     << "\t\tto state id: " << Syn_Frame::get_print_id(successor->id()) << endl;
-            searcher.push_back(frame);
-        }
-        // the last position is the accepting edge
+        aalta_formula *X_edge = search_edge.second;
+        aalta_formula *Y_edge = search_edge.first;
+        tp_frame->SetTravelDirection(Y_edge, X_edge);
+
+        // the last edge may not be one accepting edge if using onestep search
+
+
         if (verbose)
             cout << "last position of sat trace is accepting edge (we will then check if BaseWinningAtY)" << endl;
-        aalta_formula *Y_edge = (tr->back()).first;
         aalta_formula *end_state = (searcher.back())->GetFormulaPointer();
         unordered_set<int> edge;
         Y_edge->to_set(edge); // edge only with Y-literals here
@@ -586,7 +535,6 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
         }
         else
         {
-            aalta_formula *X_edge = (tr->back()).second;
             (searcher.back())->SetTravelDirection(Y_edge, X_edge);
             if (verbose)
                 cout << "=====not BaseWinningAtY\tBEGIN" << endl
