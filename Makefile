@@ -18,6 +18,7 @@ BDD_LIB			=	deps/CUDD-install/lib/libcudd.a
 
 ALLFILES		=	main.cpp $(CHECKING) $(SOLVER) $(FORMULAFILES) $(PARSERFILES) $(UTILFILES) $(SYNTHESIS) $(BDD_LIB) 
 ALL_TEST_DEPS	=	$(FORMULAFILES) $(NEW_CHECKING) $(SOLVER) $(UTILFILES) $(PARSERFILES) $(SYNTHESIS) $(BDD_LIB)
+ALLFILES_NEW	=	main.cpp $(ALL_TEST_DEPS)
 
 
 CC	    =   g++
@@ -40,10 +41,10 @@ ltlparser/ltlparser.c :
 .PHONY :    release debug clean
 
 release :   $(ALLFILES)
-	    $(CC) $(FLAG) $(RELEASEFLAG) $(ALLFILES) -lm -lz -o ltlfsyn
+	    $(CC) $(FLAG) $(RELEASEFLAG) $(ALLFILES_NEW) -lm -lz -o ltlfsyn
 
 debug :	$(ALLFILES)
-	$(CC) $(FLAG) $(DEBUGFLAG) $(ALLFILES) -lm -lz -o ltlfsyn
+	$(CC) $(FLAG) $(DEBUGFLAG) $(ALLFILES_NEW) -lm -lz -o ltlfsyn
 
 onechecker-basic : tests/onechecker/01.basic.cpp $(ALL_TEST_DEPS)
 	$(CC) $(FLAG) $(DEBUGFLAG) $^ -lm -lz -o $@
