@@ -9,7 +9,7 @@
 
 #include "formula_in_bdd.h"
 #include "deps/CUDD-install/include/cudd.h"
-#include "carchecker.h"
+#include "onechecker.h"
 
 using namespace std;
 
@@ -170,13 +170,9 @@ aalta_formula *xnf(aalta_formula *af);
 inline bool EdgeConstraintIsUnsat(aalta_formula *edge)
 {
     edge = edge->add_tail();
-    CARChecker checker(edge, false, false);
+    OneChecker checker(edge, false, false);
     return !(checker.check());
 }
-
-// // return edgecons && G!(PREFIX) && G!(failure)
-// aalta_formula *ConstructBlockFormula(list<Syn_Frame *> &prefix, aalta_formula *edge_cons);
-void BlockState(CARChecker &checker, list<Syn_Frame *> &prefix, bool verbose = false);
 
 inline aalta_formula *global_not(aalta_formula *phi)
 {

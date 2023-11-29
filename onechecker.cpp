@@ -12,6 +12,11 @@ using namespace std;
 
 namespace aalta
 {
+	bool OneChecker::check ()
+	{
+		return check(to_check_);
+	}
+
 	bool OneChecker::check (aalta_formula* f)
     {
 		if (sat_once (f))
@@ -52,6 +57,12 @@ namespace aalta
 			return true;
 		}
 		return false;
+	}
+
+	void OneChecker::print_evidence ()
+	{
+		assert (evidence_ != NULL);
+		evidence_->print ();
 	}
 
 	Transition* OneChecker::get_one_transition_from (aalta_formula* f)

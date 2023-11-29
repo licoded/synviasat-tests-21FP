@@ -5,7 +5,7 @@
 #include <sys/time.h>
 
 #include "synthesis.h"
-#include "carchecker.h"
+#include "onechecker.h"
 #include "generalizer.h"
 
 using namespace std;
@@ -469,7 +469,7 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
     long double timeuse;
     // cout << "begin sat solving" << endl;
     gettimeofday(&t1, NULL);
-    CARChecker checker(f, false, true);
+    OneChecker checker(f, false, true);
     bool check_res = checker.check();
     gettimeofday(&t2, NULL);
     timeuse = (t2.tv_sec - t1.tv_sec) * 1000.0 + (t2.tv_usec - t1.tv_usec) / 1000.0;
@@ -491,7 +491,11 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
             checker.print_evidence();
             cout << "push items to stack:" << endl;
         }
-        vector<pair<aalta_formula *, aalta_formula *> > *tr = checker.get_model_for_synthesis();
+
+        pair<aalta_formula *, aalta_formula *> tr_0 = checker.get_model_for_synthesis();
+        vector<pair<aalta_formula *, aalta_formula *> > *tr = new vector<pair<aalta_formula *, aalta_formula *> >;
+        tr->push_back(tr_0);
+
         tp_frame->SetTraceBeginning();
         for (int i = 0; i < ((tr->size()) - 1); ++i)
         {
@@ -870,24 +874,6 @@ aalta_formula *ConstructBlockFormula(list<Syn_Frame *> &prefix, aalta_formula *e
     tmp = aalta_formula(aalta_formula::WNext, NULL, global_not(tmp)).unique();
     block_formula = aalta_formula(aalta_formula::And, block_formula, tmp).unique();
     return block_formula->simplify();
-}
-
-void BlockState(CARChecker &checker, list<Syn_Frame *> &prefix, bool verbose)
-{
-    aalta_formula::af_prt_set to_block;
-    for (auto it = Syn_Frame::failure_state.begin(); it != Syn_Frame::failure_state.end(); ++it)
-    {
-        aalta_formula *tmp = (aalta_formula *)(Syn_Frame::bddP_to_afP[ull(*it)]);
-        tmp->to_or_set(to_block);
-    }
-    for (auto it = prefix.begin(); it != prefix.end(); ++it)
-        ((*it)->GetFormulaPointer())->to_or_set(to_block);
-    for (auto it = to_block.begin(); it != to_block.end(); ++it)
-    {
-        if (verbose)
-            cout << "add constraint of blocking state: " << (*it)->to_string() << endl;
-        checker.add_constraint((*it));
-    }
 }
 
 bool IsAcc(aalta_formula *predecessor, unordered_set<int> &tmp_edge)

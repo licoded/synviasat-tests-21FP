@@ -30,7 +30,10 @@ namespace aalta
                 evidence_ = NULL;
         }
 
+        bool check ();
         bool check (aalta_formula* f);
+
+        void print_evidence ();
 
         // for ltlf synthesis
         // trace <Y,X>*
