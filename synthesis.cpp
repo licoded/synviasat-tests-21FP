@@ -499,13 +499,54 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
         aalta_formula *Y_edge = search_edge.first;
         tp_frame->SetTravelDirection(Y_edge, X_edge);
 
-        // the last edge may not be one accepting edge if using onestep search
+        aalta_formula *end_state = tp_frame->GetFormulaPointer();
+        unordered_set<int> edge;
 
+        // the last edge may not be one accepting edge if using onestep search
+        if (verbose)
+            cout << "checking if acc" << endl;
+
+        {
+            edge.clear();
+            X_edge->to_set(edge);
+            Y_edge->to_set(edge);
+        }
+
+        if (!BaseWinningAtY(end_state, edge))
+        {
+            if (verbose)
+                cout << "no acc!" << endl;
+
+            aalta_formula *successor = FormulaProgression(end_state, edge);
+            Syn_Frame *frame = new Syn_Frame(successor);
+
+            if (repeat_with_prefix(searcher, successor, verbose) || frame->KnownFailure(verbose))
+            {
+                delete frame;
+                (searcher.back())->process_signal(To_failure_state, verbose);
+                return Unknown;
+            }
+            if (frame->KnownWinning(verbose))
+            {
+                delete frame;
+                (searcher.back())->process_signal(To_winning_state, verbose);
+                return Unknown;
+            }
+
+            if (verbose)
+                cout << "\t\tby edge: " << endl
+                     << "\t\t\tY = " << Y_edge->to_literal_set_string() << endl
+                     << "\t\t\tX = " << X_edge->to_literal_set_string() << endl
+                     << "\t\tto state: " << successor->to_string() << endl
+                     << "\t\tto state id: " << Syn_Frame::get_print_id(successor->id()) << endl;
+            searcher.push_back(frame);
+
+            return Unknown;
+        }
 
         if (verbose)
             cout << "last position of sat trace is accepting edge (we will then check if BaseWinningAtY)" << endl;
-        aalta_formula *end_state = (searcher.back())->GetFormulaPointer();
-        unordered_set<int> edge;
+        edge.clear();
         Y_edge->to_set(edge); // edge only with Y-literals here
         if (BaseWinningAtY(end_state, edge))
         {
