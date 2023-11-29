@@ -16,91 +16,91 @@ void usage()
 	cout << endl;
 }
 
-void test1()
-{
-	cout << "test case 1" << endl;
-	string s0 = string("F(p0) & ((G(p1)) | (F(G(p1))))");
-	string input_f = "(" + s0 + ") & (p1) & (!(p0))";
+// void test1()
+// {
+// 	cout << "test case 1" << endl;
+// 	string s0 = string("F(p0) & ((G(p1)) | (F(G(p1))))");
+// 	string input_f = "(" + s0 + ") & (p1) & (!(p0))";
 
-	aalta_formula *f;
-	f = aalta_formula::TAIL();
-	aalta_formula::TRUE();
-	aalta_formula::FALSE();
-	cout << "src input formula: " << input_f << endl;
-	f = aalta_formula(input_f.c_str(), true).unique();
-	f = f->nnf();
-	f = f->add_tail();
-	f = f->remove_wnext();
-	f = f->simplify();
-	f = f->split_next();
-	cout << "construct checker:" << f->to_string() << endl;
+// 	aalta_formula *f;
+// 	f = aalta_formula::TAIL();
+// 	aalta_formula::TRUE();
+// 	aalta_formula::FALSE();
+// 	cout << "src input formula: " << input_f << endl;
+// 	f = aalta_formula(input_f.c_str(), true).unique();
+// 	f = f->nnf();
+// 	f = f->add_tail();
+// 	f = f->remove_wnext();
+// 	f = f->simplify();
+// 	f = f->split_next();
+// 	cout << "construct checker:" << f->to_string() << endl;
 
-	CARChecker checker(f, false, true);
-	checker.add_constraint(aalta_formula(s0.c_str(), true).unique(), true, true);
-	bool res = checker.check();
-	cout << (res ? "sat" : "unsat") << endl;
-	if (res)
-		checker.print_evidence();
-}
+// 	CARChecker checker(f, false, true);
+// 	checker.add_constraint(aalta_formula(s0.c_str(), true).unique(), true, true);
+// 	bool res = checker.check();
+// 	cout << (res ? "sat" : "unsat") << endl;
+// 	if (res)
+// 		checker.print_evidence();
+// }
 
-void test2()
-{
-	cout << "\ntest case 2" << endl;
-	aalta_formula *f;
-	f = aalta_formula::TAIL();
-	f = aalta_formula("a U b", true).unique();
-	f = f->nnf();
-	f = f->add_tail();
-	f = f->remove_wnext();
-	f = f->simplify();
-	f = f->split_next();
-	cout << "construct checker:" << f->to_string() << endl;
+// void test2()
+// {
+// 	cout << "\ntest case 2" << endl;
+// 	aalta_formula *f;
+// 	f = aalta_formula::TAIL();
+// 	f = aalta_formula("a U b", true).unique();
+// 	f = f->nnf();
+// 	f = f->add_tail();
+// 	f = f->remove_wnext();
+// 	f = f->simplify();
+// 	f = f->split_next();
+// 	cout << "construct checker:" << f->to_string() << endl;
 
-	CARChecker checker(f, false, true);
-	checker.add_constraint(aalta_formula("a U b", true).unique(), true, true);
-	bool res = checker.check();
-	cout << (res ? "sat" : "unsat") << endl;
-	if (res)
-		checker.print_evidence();
-}
+// 	CARChecker checker(f, false, true);
+// 	checker.add_constraint(aalta_formula("a U b", true).unique(), true, true);
+// 	bool res = checker.check();
+// 	cout << (res ? "sat" : "unsat") << endl;
+// 	if (res)
+// 		checker.print_evidence();
+// }
 
-void test3()
-{
-	aalta_formula *f;
-	f = aalta_formula::TAIL();
-	f = aalta_formula("a U b", true).unique();
-	f = f->nnf();
-	f = f->add_tail();
-	f = f->remove_wnext();
-	f = f->simplify();
-	f = f->split_next();
+// void test3()
+// {
+// 	aalta_formula *f;
+// 	f = aalta_formula::TAIL();
+// 	f = aalta_formula("a U b", true).unique();
+// 	f = f->nnf();
+// 	f = f->add_tail();
+// 	f = f->remove_wnext();
+// 	f = f->simplify();
+// 	f = f->split_next();
 
-	CARChecker checker(f, false, true);
-	bool res = checker.check();
-	cout << (res ? "sat" : "unsat") << endl;
-	if (res)
-		checker.print_evidence();
-}
+// 	CARChecker checker(f, false, true);
+// 	bool res = checker.check();
+// 	cout << (res ? "sat" : "unsat") << endl;
+// 	if (res)
+// 		checker.print_evidence();
+// }
 
-void test5()
-{
-	aalta_formula *f;
-	f = aalta_formula::TAIL();
-	// ((s_1 & (G ((!h_0 | !h_1) & (h_0 | !t) & (X s_1))) & (F t)) | s_0 | (F ((!s_0 & !s_1) | (!h_0 & (X[!] s_0)) | (h_0 & (X[!] s_1)))))
-	aalta_formula *f1 = aalta_formula("((s_1 & (G ((!h_0 | !h_1) & (h_0 | !t) & (X s_1))) & (F t)) | s_0 | (F ((!s_0 & !s_1) | (!h_0 & (X[!] s_0)) | (h_0 & (X[!] s_1)))))", true).unique();
-	aalta_formula *edge = aalta_formula("Tail & !h_1 & t & h_0 & s_1 & !s_0", true).unique();
-	unordered_set<int> edge_set;
-	edge->to_set(edge_set);
-	aalta_formula *f2 = FormulaProgression(f1, edge_set);
-	cout << f2->to_string() << endl;
-	// aalta_formula *f2_false = aalta_formula("((s_1 & (G ((!h_0 | !h_1) & (h_0 | !t) & (X s_1)))) | s_1 | (F ((!s_0 & !s_1) | (!h_0 & (X[!] s_0)) | (h_0 & (X[!] s_1)))))").unique();
-	// aalta_formula *f2_true = aalta_formula("True").unique();
-	/**
-	 * f2_true is TRUE for LTLf syntax, while f2_false is TRUE for LTL syntax.
-	 * And we don't need to handle TAIL/accepting_edge in our codes, no matter in synthesis or aaltaf.
-	 * So, current FormulaProgression is just enough for use.
-	*/
-}
+// void test5()
+// {
+// 	aalta_formula *f;
+// 	f = aalta_formula::TAIL();
+// 	// ((s_1 & (G ((!h_0 | !h_1) & (h_0 | !t) & (X s_1))) & (F t)) | s_0 | (F ((!s_0 & !s_1) | (!h_0 & (X[!] s_0)) | (h_0 & (X[!] s_1)))))
+// 	aalta_formula *f1 = aalta_formula("((s_1 & (G ((!h_0 | !h_1) & (h_0 | !t) & (X s_1))) & (F t)) | s_0 | (F ((!s_0 & !s_1) | (!h_0 & (X[!] s_0)) | (h_0 & (X[!] s_1)))))", true).unique();
+// 	aalta_formula *edge = aalta_formula("Tail & !h_1 & t & h_0 & s_1 & !s_0", true).unique();
+// 	unordered_set<int> edge_set;
+// 	edge->to_set(edge_set);
+// 	aalta_formula *f2 = FormulaProgression(f1, edge_set);
+// 	cout << f2->to_string() << endl;
+// 	// aalta_formula *f2_false = aalta_formula("((s_1 & (G ((!h_0 | !h_1) & (h_0 | !t) & (X s_1)))) | s_1 | (F ((!s_0 & !s_1) | (!h_0 & (X[!] s_0)) | (h_0 & (X[!] s_1)))))").unique();
+// 	// aalta_formula *f2_true = aalta_formula("True").unique();
+// 	/**
+// 	 * f2_true is TRUE for LTLf syntax, while f2_false is TRUE for LTL syntax.
+// 	 * And we don't need to handle TAIL/accepting_edge in our codes, no matter in synthesis or aaltaf.
+// 	 * So, current FormulaProgression is just enough for use.
+// 	*/
+// }
 
 int main(int argc, char **argv)
 {
