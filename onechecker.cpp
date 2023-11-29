@@ -14,6 +14,14 @@ namespace aalta
 {
 	bool OneChecker::check ()
 	{
+		if (to_check_->oper() == aalta_formula::True)
+		{
+			if (evidence_ != NULL)
+				evidence_->push(true);
+			return true;
+		}
+		if (to_check_->oper() == aalta_formula::False)
+			return false;
 		return check(to_check_);
 	}
 
