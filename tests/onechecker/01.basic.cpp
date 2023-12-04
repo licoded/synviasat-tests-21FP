@@ -34,7 +34,7 @@ int main()
 	aalta_formula::TRUE();
 	aalta_formula::FALSE();
 	af = aalta_formula(input_f.c_str(), true).nnf();
-	af = af->remove_wnext();
+	// af = af->remove_wnext();
 	af = af->simplify();
 	af = af->split_next();
 	af = af->unique();
