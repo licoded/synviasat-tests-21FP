@@ -487,7 +487,9 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
         cout << "average sat time: " << Syn_Frame::average_sat_time << " ms" << endl;
         exit(0);
     }
-    AutomataNode automata_node = Syn_Frame::automata_ptr->state_map_[tp_frame->GetBddPointer()];
+    // AutomataNode automata_node = Syn_Frame::automata_ptr->state_map_[tp_frame->GetBddPointer()];
+    Syn_Frame::bddP_to_afP[ull(tp_frame->GetBddPointer())] = ull(tp_frame->GetFormulaPointer());
+    AutomataNode *automata_node = Syn_Frame::automata_ptr->get_state(tp_frame->GetBddPointer());
     if (check_res)
     { // sat
         if (verbose)
@@ -524,7 +526,7 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
 
             aalta_formula *successor = FormulaProgression(end_state, edge);
             Syn_Frame *frame = new Syn_Frame(successor);
-            automata_node[Y_edge][X_edge] = frame->GetBddPointer();
+            (*automata_node)[Y_edge][X_edge] = frame->GetBddPointer();
 
             if (repeat_with_prefix(searcher, successor, verbose) || frame->KnownFailure(verbose))
             {
@@ -560,7 +562,7 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
             {
                 cout << "=====BaseWinningAtY\tBEGIN\nfor acc edge, Y\\models state, so top item is base-winning: " << end_state->to_string() << endl;
             }
-            automata_node[Y_edge][aalta_formula::TRUE()] = FormulaInBdd::TRUE_bddP_;
+            (*automata_node)[Y_edge][aalta_formula::TRUE()] = FormulaInBdd::TRUE_bddP_;
             if (searcher.size() == 1)
             {
                 if (verbose)
@@ -584,7 +586,7 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
         else
         {
             (searcher.back())->SetTravelDirection(Y_edge, X_edge);
-            automata_node[Y_edge][X_edge] = FormulaInBdd::TRUE_bddP_;
+            (*automata_node)[Y_edge][X_edge] = FormulaInBdd::TRUE_bddP_;
             if (verbose)
                 cout << "=====not BaseWinningAtY\tBEGIN" << endl
                      << "accepting edge:" << endl

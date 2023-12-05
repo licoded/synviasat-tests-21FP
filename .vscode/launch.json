@@ -24,7 +24,15 @@
             ]
         },
         {
-            "name": "mac-onechecker",
+            "name": "mac-main-01",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceRoot}/ltlfsyn",
+            "args": ["examples/my-own-create/01.ltlf", "examples/my-own-create/01.part"],
+            "cwd": "${workspaceRoot}",
+        },
+        {
+            "name": "mac-main-f251",
             "type": "lldb",
             "request": "launch",
             "program": "${workspaceRoot}/ltlfsyn",

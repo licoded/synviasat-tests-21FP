@@ -8,9 +8,8 @@
 #ifndef AUTOMATA_H
 #define AUTOMATA_H
 
-#include "aalta_formula.h"
+#include "formula/aalta_formula.h"
 #include "formula_in_bdd.h"
-#include "synthesis.h"
 #include <unordered_map>
 using namespace std;
 
@@ -45,22 +44,20 @@ namespace automata
 
         Automata(bool sys_first = true) : sys_first_(sys_first) {}
 
-        void print_automata()
+        AutomataNode* get_state(State_af state)
         {
-            for (auto state_it = state_map_.begin(); state_it != state_map_.end(); ++state_it)
+            auto state_it = state_map_.find(state);
+            if (state_it == state_map_.end())
             {
-                cout << "- " << "state: " << Syn_Frame::cast_to_af(state_it->first)->to_string() << endl;
-                for (auto first_edge_it = state_it->second.begin(); first_edge_it != state_it->second.end(); ++first_edge_it)
-                {
-                    cout << "\t" << "- " << "first edge: " << first_edge_it->first->to_literal_set_string() << endl;
-                    for (auto second_edge_it = first_edge_it->second.begin(); second_edge_it != first_edge_it->second.end(); ++second_edge_it)
-                    {
-                        cout << "\t\t" << "- " << "second edge: " << second_edge_it->first->to_literal_set_string() << endl;
-                        cout << "\t\t\t" << "- " << "state: " << Syn_Frame::cast_to_af(second_edge_it->second)->to_string() << endl;
-                    }
-                }
+                AutomataNode *automata_node = new AutomataNode();
+                state_map_[state] = *automata_node;
+                // state_map_.insert({state, *automata_node});
+                return automata_node;
             }
+            return &(state_it->second);
         }
+
+        void print_automata();
     };
 }
 

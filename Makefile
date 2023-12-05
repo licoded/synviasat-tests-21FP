@@ -13,11 +13,13 @@ NEW_CHECKING	=	onechecker.cpp ltlfchecker.cpp carchecker.cpp evidence.cpp
 
 SYNTHESIS		=	synthesis.cpp formula_in_bdd.cpp generalizer.cpp
 
+AUTOMATA		=	automata.cpp
+
 BDD_LIB			=	deps/CUDD-install/lib/libcudd.a
 
 
 ALLFILES		=	main.cpp $(CHECKING) $(SOLVER) $(FORMULAFILES) $(PARSERFILES) $(UTILFILES) $(SYNTHESIS) $(BDD_LIB) 
-ALL_TEST_DEPS	=	$(FORMULAFILES) $(NEW_CHECKING) $(SOLVER) $(UTILFILES) $(PARSERFILES) $(SYNTHESIS) $(BDD_LIB)
+ALL_TEST_DEPS	=	$(FORMULAFILES) $(NEW_CHECKING) $(SOLVER) $(UTILFILES) $(PARSERFILES) $(SYNTHESIS) $(BDD_LIB) $(AUTOMATA)
 ALLFILES_NEW	=	main.cpp $(ALL_TEST_DEPS)
 
 
@@ -40,10 +42,10 @@ ltlparser/ltlparser.c :
 
 .PHONY :    release debug clean
 
-release :   $(ALLFILES)
+release :   $(ALLFILES_NEW)
 	    $(CC) $(FLAG) $(RELEASEFLAG) $(ALLFILES_NEW) -lm -lz -o ltlfsyn
 
-debug :	$(ALLFILES)
+debug :	$(ALLFILES_NEW)
 	$(CC) $(FLAG) $(DEBUGFLAG) $(ALLFILES_NEW) -lm -lz -o ltlfsyn
 
 onechecker-basic : tests/onechecker/01.basic.cpp $(ALL_TEST_DEPS)
