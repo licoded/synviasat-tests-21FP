@@ -52,7 +52,8 @@ namespace automata
                 AutomataNode *automata_node = new AutomataNode();
                 state_map_[state] = *automata_node;
                 // state_map_.insert({state, *automata_node});
-                return automata_node;
+                // return automata_node;
+                state_it = state_map_.find(state);
             }
             return &(state_it->second);
         }

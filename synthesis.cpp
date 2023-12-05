@@ -96,6 +96,7 @@ bool is_realizable(aalta_formula *src_formula, unordered_set<string> &env_var, c
 
     // initialize Automata
     Syn_Frame::automata_ptr = new Automata(true);
+    Syn_Frame::bddP_to_afP[ull(FormulaInBdd::TRUE_bddP_)] = ull(aalta_formula::TRUE());
 
     list<Syn_Frame *> searcher;
     Syn_Frame *init = new Syn_Frame(src_formula); // xnf(src_formula)
@@ -105,6 +106,7 @@ bool is_realizable(aalta_formula *src_formula, unordered_set<string> &env_var, c
              << endl;
     while (true)
     {
+        Syn_Frame::automata_ptr->print_automata();
         Syn_Frame *cur_frame = searcher.back();
         if (verbose)
         {
@@ -198,6 +200,7 @@ bool is_realizable(aalta_formula *src_formula, unordered_set<string> &env_var, c
 Syn_Frame::Syn_Frame(aalta_formula *af)
 {
     state_in_bdd_ = new FormulaInBdd(af);
+    Syn_Frame::bddP_to_afP[ull(state_in_bdd_->GetBddPointer())] = ull(state_in_bdd_->GetFormulaPointer());
     X_base_ = aalta_formula::TRUE();
     Y_constraint_ = aalta_formula::TRUE();
     X_constraint_ = aalta_formula::TRUE();
@@ -488,7 +491,6 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
         exit(0);
     }
     // AutomataNode automata_node = Syn_Frame::automata_ptr->state_map_[tp_frame->GetBddPointer()];
-    Syn_Frame::bddP_to_afP[ull(tp_frame->GetBddPointer())] = ull(tp_frame->GetFormulaPointer());
     AutomataNode *automata_node = Syn_Frame::automata_ptr->get_state(tp_frame->GetBddPointer());
     if (check_res)
     { // sat
