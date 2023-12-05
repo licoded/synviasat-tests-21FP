@@ -79,7 +79,7 @@ public:
     static int sat_call_cnt;
     static long double average_sat_time;
 
-    static Automata& automata;
+    static Automata* automata_ptr;
 
     Syn_Frame(aalta_formula *);
     ~Syn_Frame() { delete state_in_bdd_; }
