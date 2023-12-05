@@ -528,7 +528,7 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
 
             aalta_formula *successor = FormulaProgression(end_state, edge);
             Syn_Frame *frame = new Syn_Frame(successor);
-            (*automata_node)[Y_edge][X_edge] = frame->GetBddPointer();
+            (*automata_node)[Y_edge->unique()][X_edge->unique()] = frame->GetBddPointer();
 
             if (repeat_with_prefix(searcher, successor, verbose) || frame->KnownFailure(verbose))
             {
@@ -564,7 +564,7 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
             {
                 cout << "=====BaseWinningAtY\tBEGIN\nfor acc edge, Y\\models state, so top item is base-winning: " << end_state->to_string() << endl;
             }
-            (*automata_node)[Y_edge][aalta_formula::TRUE()] = FormulaInBdd::TRUE_bddP_;
+            (*automata_node)[Y_edge->unique()][aalta_formula::TRUE()] = FormulaInBdd::TRUE_bddP_;
             if (searcher.size() == 1)
             {
                 if (verbose)
@@ -588,7 +588,7 @@ Status Expand(list<Syn_Frame *> &searcher, const struct timeval &prog_start, boo
         else
         {
             (searcher.back())->SetTravelDirection(Y_edge, X_edge);
-            (*automata_node)[Y_edge][X_edge] = FormulaInBdd::TRUE_bddP_;
+            (*automata_node)[Y_edge->unique()][X_edge->unique()] = FormulaInBdd::TRUE_bddP_;
             if (verbose)
                 cout << "=====not BaseWinningAtY\tBEGIN" << endl
                      << "accepting edge:" << endl
