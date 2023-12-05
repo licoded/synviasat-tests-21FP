@@ -10,8 +10,10 @@
 #include "formula_in_bdd.h"
 #include "deps/CUDD-install/include/cudd.h"
 #include "onechecker.h"
+#include "automata.h"
 
 using namespace std;
+using namespace automata;
 
 typedef enum
 {
@@ -69,8 +71,15 @@ public:
     // for blocking failure state
     static map<ull, ull> bddP_to_afP;
 
+    static aalta_formula* cast_to_af(DdNode *bdd_pointer)
+    {
+        return (aalta_formula *)Syn_Frame::bddP_to_afP[ull(bdd_pointer)];
+    }
+
     static int sat_call_cnt;
     static long double average_sat_time;
+
+    static Automata& automata;
 
     Syn_Frame(aalta_formula *);
     ~Syn_Frame() { delete state_in_bdd_; }
