@@ -177,6 +177,13 @@ int main(int argc, char **argv)
 		cout << "Realizable" << endl;
 	else
 		cout << "Unrealizable" << endl;
+
+	if (verbose)
+	{
+		cout << "automata:" << endl;
+		Syn_Frame::automata_ptr->print_automata();
+	}
+
 	aalta_formula::destroy();
 
 	gettimeofday(&t2, NULL);

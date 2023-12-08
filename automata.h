@@ -39,6 +39,8 @@ namespace automata
         Automata(bool sys_first = true);
 
         AutomataNode* get_state(State_af state);
+
+        void print_automata();
     };
 }
 
